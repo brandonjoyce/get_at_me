@@ -6,6 +6,13 @@ defmodule GetAtMe do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    if Enum.any?([
+      System.get_env("GITHUB_CLIENT_ID"),
+      System.get_env("GITHUB_CLIENT_SECRET"),
+    ], fn(x) -> is_nil(x) end) do
+      raise "You need to set these ENV variables"
+    end
+
     children = [
       # Start the endpoint when the application starts
       supervisor(GetAtMe.Endpoint, []),
